@@ -6,18 +6,21 @@ import Image, { StaticImageData } from 'next/image';
 import { GetStaticProps } from 'next';
 import { AppProps } from 'next/app';
 import Link from 'next/link';
+import PageTransitionProvider from '../components/page-transition-provider';
 
 const StyledDescription = styled.p`
   padding-top: 6px;
 `;
 
-const StyledImgWrapper = styled(Link)`
+const StyledImgWrapper = styled(Link)<{ transitionName: string }>`
   position: relative;
   margin: 36px auto;
   display: block;
   height: 600px;
   width: 100%;
   max-width: 600px;
+  view-transition-name: ${({ transitionName }) => transitionName};
+
   img {
     object-fit: contain;
   }
@@ -42,14 +45,18 @@ export default function ImagePage({ pageImage }: Props) {
       </Head>
 
       <main>
-        <Container>
-          <h1>{pageImage.name}:</h1>
-          <StyledDescription>Click on the image to go back to the gallery:</StyledDescription>
+        <PageTransitionProvider>
+          <Container>
+            <h1>{pageImage.name}:</h1>
+            <StyledDescription>Click on the image to go back to the gallery:</StyledDescription>
 
-          <StyledImgWrapper href='/'>
-            <Image src={pageImage.image} alt={pageImage.name} fill />
-          </StyledImgWrapper>
-        </Container>
+            <StyledImgWrapper
+              href='/'
+              transitionName={pageImage.name.toLowerCase().replaceAll(' ', '-').replaceAll("'", '')}>
+              <Image src={pageImage.image} alt={pageImage.name} fill />
+            </StyledImgWrapper>
+          </Container>
+        </PageTransitionProvider>
       </main>
     </>
   );

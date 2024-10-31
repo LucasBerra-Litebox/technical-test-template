@@ -5,6 +5,7 @@ import { LG_MIN_MEDIA_QUERY, MD_MIN_MEDIA_QUERY, SM_MIN_MEDIA_QUERY } from '../s
 import { IMAGE_ARRAY } from '../utils/constants';
 import Image from 'next/image';
 import Link from 'next/link';
+import PageTransitionProvider from '../components/page-transition-provider';
 
 const StyledDescription = styled.p`
   padding-top: 6px;
@@ -24,11 +25,13 @@ const StyledGrid = styled.div`
   }
 `;
 
-const StyledImgWrapper = styled(Link)`
+const StyledImgWrapper = styled(Link)<{ transitionName: string }>`
   height: 220px;
   width: 100%;
   position: relative;
   margin: 0 auto;
+  view-transition-name: ${({ transitionName }) => transitionName};
+
   img {
     object-fit: contain;
   }
@@ -52,15 +55,21 @@ export default function Home() {
         <Container>
           <h1>View Transition API example</h1>
           <StyledDescription>Click any image to see the view transition</StyledDescription>
-          <StyledGrid>
-            {IMAGE_ARRAY.map(image => {
-              return (
-                <StyledImgWrapper key={image.slug} href={`/${image.slug}`}>
-                  <Image src={image.image} alt={image.name} fill />
-                </StyledImgWrapper>
-              );
-            })}
-          </StyledGrid>
+
+          <PageTransitionProvider>
+            <StyledGrid>
+              {IMAGE_ARRAY.map(image => {
+                return (
+                  <StyledImgWrapper
+                    key={image.slug}
+                    href={`/${image.slug}`}
+                    transitionName={image.name.toLowerCase().replaceAll(' ', '-').replaceAll("'", '')}>
+                    <Image src={image.image} alt={image.name} fill />
+                  </StyledImgWrapper>
+                );
+              })}
+            </StyledGrid>
+          </PageTransitionProvider>
         </Container>
       </main>
     </>
